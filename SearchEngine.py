@@ -11,6 +11,19 @@ from collections import defaultdict
 import os
 
 
+STOP_WORDS = frozenset(("i", "me", "my", "myself", "we", "our", "ours", "ourselves", "you", "your", "yours", "yourself",
+                        "yourselves", "he", "him", "his", "himself", "she", "her", "hers", "herself", "it", "its",
+                        "itself", "they", "them", "their", "theirs", "themselves", "what", "which", "who", "whom",
+                        "this", "that", "these", "those", "am", "is", "are", "was", "were", "be", "been", "being",
+                        "have", "has", "had", "having", "do", "does", "did", "doing", "a", "an", "the", "and", "but",
+                        "if", "or", "because", "as", "until", "while", "of", "at", "by", "for", "with", "about",
+                        "against", "between", "into", "through", "during", "before", "after", "above", "below", "to",
+                        "from", "up", "down", "in", "out", "on", "off", "over", "under", "again", "further", "then",
+                        "once", "here", "there", "when", "where", "why", "how", "all", "any", "both", "each", "few",
+                        "more", "most", "other", "some", "such", "no", "nor", "not", "only", "own", "same", "so",
+                        "than", "too", "very", "s", "t", "can", "will", "just", "don", "should", "now"))
+
+
 def SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_containing_the_index, top_k):
 
     # Create a Schema
@@ -51,8 +64,8 @@ def SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_
         # print(query_id)
         parsed_query = qp.parse(query['Query'])
 
-        print('Input Query: ' + query['Query'])
-        print('Parsed Query:' + str(parsed_query))
+        # print('Input Query: ' + query['Query'])
+        # print('Parsed Query:' + str(parsed_query))
 
         # Create a Searcher for the Index with the selected Scoring- Function
         docIDs = []
@@ -61,13 +74,13 @@ def SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_
 
             # perform a Search
             results = searcher.search(parsed_query, limit=top_k, terms=True, scored=True)
-            if results.has_matched_terms():
-                # What terms matched in each hit?
-                for hit in results:
-                    print('ID:', hit['id'])
-                    print(hit.score)
-                    print('Terms Matched:', hit.matched_terms())
-                    print('================')
+            # if results.has_matched_terms():
+            #     # What terms matched in each hit?
+            #     for hit in results:
+            #         print('ID:', hit['id'])
+            #         print(hit.score)
+            #         print('Terms Matched:', hit.matched_terms())
+            #         print('================')
             # print the ID of the best document
             for relev in results:
                 docIDs.append(relev['id'])
@@ -81,7 +94,7 @@ def SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_
 
 def main():
     data_path = './data/html_content_Cranfield.tsv'
-    query_path = './data/cran_Queries_Test.tsv'
+    query_path = './data/cran_Queries.tsv'
     configuration_path = './data/SearchEngines.csv'
     top_k = 30
 
