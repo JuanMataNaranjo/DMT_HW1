@@ -12,6 +12,7 @@ import os
 
 
 def SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_containing_the_index, top_k):
+
     # Create a Schema
     schema = Schema(id=ID(stored=True), title=TEXT(stored=False, analyzer=text_analyzer),
                     content=TEXT(stored=False, analyzer=text_analyzer))
@@ -50,20 +51,24 @@ def SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_
         # print(query_id)
         parsed_query = qp.parse(query['Query'])
 
-        # print('Input Query: ' + query['Query'])
-        # print('Parsed Query:' + str(parsed_query))
+        print('Input Query: ' + query['Query'])
+        print('Parsed Query:' + str(parsed_query))
 
         # Create a Searcher for the Index with the selected Scoring- Function
-
         docIDs = []
 
         with ix.searcher(weighting=scoring_function) as searcher:
 
             # perform a Search
-            results = searcher.search(parsed_query, limit=top_k)
-
+            results = searcher.search(parsed_query, limit=top_k, terms=True, scored=True)
+            if results.has_matched_terms():
+                # What terms matched in each hit?
+                for hit in results:
+                    print('ID:', hit['id'])
+                    print(hit.score)
+                    print('Terms Matched:', hit.matched_terms())
+                    print('================')
             # print the ID of the best document
-
             for relev in results:
                 docIDs.append(relev['id'])
         query_results[str(query_id)] = list(map(int, docIDs))
@@ -75,11 +80,8 @@ def SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_
 
 
 def main():
-    # text_analyzer = eval('RegexTokenizer() | LowercaseFilter() | StopFilter()')
-    # scoring_function = eval('scoring.BM25F()')
-    # directory_containing_the_index = './index/'
     data_path = './data/html_content_Cranfield.tsv'
-    query_path = './data/cran_Queries.tsv'
+    query_path = './data/cran_Queries_Test.tsv'
     configuration_path = './data/SearchEngines.csv'
     top_k = 30
 
@@ -100,11 +102,13 @@ def main():
         scoring_function = eval(SE['Scoring_Functions'])
         directory_containing_the_index = './index/' + str(SE_ID)
 
-        query_results = SearchEngine(queries, text_analyzer, scoring_function, data_path, directory_containing_the_index, top_k)
+        query_results = SearchEngine(queries, text_analyzer, scoring_function, data_path,
+                                     directory_containing_the_index, top_k)
         print(SE_ID, query_results)
         total_query_results[SE_ID] = query_results
 
     utils.write_json('./data/total_query_results.json', total_query_results)
+
 
 if __name__ == "__main__":
     main()
