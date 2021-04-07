@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 # TODO: Make Plots nicer
 # TODO: Maybe make code nicer
 # TODO: Make variable names clearer
+# TODO: improve search engine configurations
 
 
 def MRR(ground_truth_dict, search_engine_conf):
