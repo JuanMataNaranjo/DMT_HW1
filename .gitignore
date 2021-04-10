@@ -133,3 +133,5 @@ dmypy.json
 /venv
 /index
 .idea/
+
+/HW1/part_2/dataset
