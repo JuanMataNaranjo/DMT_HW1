@@ -42,3 +42,19 @@ def write_csv(filename, content):
     with open(filename, "wt", newline='', encoding='utf-8') as out_file:
         tsv_writer = csv.writer(out_file, delimiter=',')
         tsv_writer.writerow(content)
+
+def read_result_se(path):
+    """
+    Function to read ground truth into dictionary
+
+    :param path: Path and file name to be converted
+    :return: Dictionary
+    """
+    result_se_dict = defaultdict(list)
+    df = pd.read_csv(path, sep='\t')
+    count = 0
+    for index, row in df.iterrows():
+        if row['Rank'] <= 4:
+            result_se_dict[row['Query_ID']].append(row['Doc_ID'])
+            count += 1
+    return dict(result_se_dict)
