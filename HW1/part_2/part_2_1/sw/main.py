@@ -3,6 +3,7 @@ import csv
 import string
 import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 
 def generate_shingles(input_path, output_path, w=3):
@@ -48,9 +49,35 @@ def generate_shingles(input_path, output_path, w=3):
             tsv_writer.writerow([key, values])
 
 
+
 def prob(j, r, b):
     value = 1-(1-j**r)**b
     return value
+
+def b_vs_r(r, t=.97):
+    """
+    Given a value of r, based on the second constraint, what is the minimum value b can take?
+    :param r:
+    :return:
+    """
+    min_b = (np.log(1-t))/(np.log(1-.95**r))
+    return min_b
+
+def view_plot(r, b='default', jacc=.95, t=.97):
+    if b == 'default':
+        b_value = b_vs_r(r, t)
+        print(b_value)
+    else:
+        b_value = b
+    x = np.arange(0, 1, .001)
+    y = prob(x, r, b_value)
+    # plot the prob
+    plt.plot(x, y, 'b-')
+    plt.xlabel('Jaccard Similarity value')
+    plt.ylabel('Probability of two pairs with that Jaccard value \n of being provided by the LSH algorithm')
+    plt.axvline(x=jacc, ymin=0, ymax=1, color='r', linestyle='--')
+    plt.title('S-Curve')
+    plt.show()
 
 
 def main():
@@ -59,22 +86,13 @@ def main():
     w = 3
     generate_shingles(input_path, output_path, w=w)
 
-    r = 20
-    b = 5
-    x = np.arange(0, 1, .01)
-    y = prob(x, r, b)
-    # plot the prob
-    plt.plot(x, y)
-    plt.xlabel('Jaccard Similarity value')
-    plt.ylabel('Probability of two pairs with that Jaccard value of being provided by the LSH algorithm')
-    plt.show()
-    return test
-
-# java tools.NearDuplicatesDetector lsh_plus_min_hashing 0.9 10 5 input_data/hash_function_50.tsv input_
+# .9
+# java tools.NearDuplicatesDetector lsh_plus_min_hashing 0.95 100 1164 input_data/hash_function_50.tsv input_
 # data/Shingles.tsv output_data/Results__90_20_25.tsv
 
+
 if __name__ == "__main__":
-    test = main()
+    main()
 
 
 # False Positives: We can still remove them after the LSH model output
@@ -83,5 +101,7 @@ if __name__ == "__main__":
 # the following:
 #   1. r*b=n (where n is the total number of  hash functions)
 #   2. 0.97 < 1-(1-.95**r)**b
-# The way in which we can reduce the number of False Positives is by actually computing the Jaccard Similarity after the LSH algorithm.
-# The way in which we reduce the number of False Negatives is by finetunning as best as possible the b value before hand
+# The way in which we can reduce the number of False Positives is by actually computing the Jaccard Similarity after
+# the LSH algorithm (LSH gives us the potential matches and we compute the actual match a posteriori and remove those
+# that are below the threshold)
+# The way in which we reduce the number of False Negatives is by fine-tunning as best as possible the b value before hand

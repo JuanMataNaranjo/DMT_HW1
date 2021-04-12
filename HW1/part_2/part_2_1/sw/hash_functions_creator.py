@@ -1,12 +1,12 @@
 import random
 import math
+import csv
 
 
 ################################################
-num_hash_functions = 10
-upper_bound_on_number_of_distinct_elements  = 10000000
-#upper_bound_on_number_of_distinct_elements =   138492
-#upper_bound_on_number_of_distinct_elements =  3746518
+num_hash_functions = 15*12
+upper_bound_on_number_of_distinct_elements = 10000000
+output_path = 'HW1/part_2/part_2_1/input_data/hash_function' + str(num_hash_functions) + '.tsv'
 
 ################################################
 
@@ -32,11 +32,11 @@ while len(set_of_all_hash_functions) < num_hash_functions:
 	while is_prime(p) == False:
 		p = random.randint(upper_bound_on_number_of_distinct_elements, 10*upper_bound_on_number_of_distinct_elements)
 	#
-	current_hash_function_id = tuple([a, b, p])
+	current_hash_function_id = tuple([a, b, p, upper_bound_on_number_of_distinct_elements])
 	set_of_all_hash_functions.add(current_hash_function_id)
 
-
-print("a\tb\tp\tn")
-for a, b ,p in set_of_all_hash_functions:
-	print(str(a) + "\t" + str(b) + "\t" + str(p) + "\t" + str(upper_bound_on_number_of_distinct_elements))
-
+with open(output_path, 'w', newline='') as out_file:
+	tsv_writer = csv.writer(out_file, delimiter='\t')
+	tsv_writer.writerow(['a', 'b', 'p', 'n'])
+	for i in set_of_all_hash_functions:
+		tsv_writer.writerow(i)
