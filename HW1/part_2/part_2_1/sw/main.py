@@ -63,6 +63,7 @@ def b_vs_r(r, t=.97):
     min_b = (np.log(1-t))/(np.log(1-.95**r))
     return min_b
 
+
 def view_plot(r, b='default', jacc=.95, t=.97):
     if b == 'default':
         b_value = b_vs_r(r, t)
@@ -96,7 +97,7 @@ if __name__ == "__main__":
 
 
 # False Positives: We can still remove them after the LSH model output
-# False Negative: We cannot recover these pairs since the LSH has not considered them inside the potential pair
+# False Negative: We cannot recover these pairs since the LSH has not considered them inside the potential pair, LSH algorithm does not identify them as near duplicates
 # Min length of sketches means that r < 300. We then have to also look for an appropriate b value. The constraints are
 # the following:
 #   1. r*b=n (where n is the total number of  hash functions)
