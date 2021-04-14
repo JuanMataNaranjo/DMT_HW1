@@ -2,6 +2,8 @@
 \usepackage{graphicx}
 \usepackage[a4paper, total={7in, 9in}]{geometry}
 \usepackage{titlesec}
+\usepackage{float}
+\usepackage[font=small,labelfont=bf]{caption}
 \graphicspath{ {images/} }
 
 \titleformat{\paragraph}
@@ -21,9 +23,9 @@
 
 \section{Part 1.1}
 
-Before we deep dive into each of the individual datasets and their respective results we will start out by first giving a brief overview of the number of documents we have, the number of queries applied over these documents and finally the number of queries for which we have their ground truth at our disposal. We will see that the number of ground truth results we have are much less than the total number of queries. For the evaluation metrics we will assume that the queries for which we don't have ground truth don't exist (we remove them from all evaluation metrics). We will then also outline the different text-analyzer $+$ scoring-functions we have deployed.
+Before we deep dive into each of the individual datasets and their respective results we will start out by first presenting the number of documents we have, the number of queries applied over these documents and finally the number of queries for which we have ground truth information at our disposal. When computing the evaluation metrics we will assume that the queries for which we don't have ground truth don't exist (we remove them since we cannot compare them against anything).
 
-\begin{table}[]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
@@ -36,20 +38,24 @@ Num Queries in GT & 110                 &  80           \\ \hline
 \label{Overview Table}
 \end{table}
 
-\begin{table}[]
+\subsection{Cranfield Dataset:}
+
+The configurations we have tested are the following:
+
+\begin{table}[H]
 \centering
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{|p{1cm}|p{10cm}|p{10cm}|}
 \hline
-\textbf{Conf ID} &
-  \textbf{Text Analyzer} &
-  \textbf{Scoring Functions} \\ \hline
+\textbf{Conf. ID} &
+  \multicolumn{1}{c|}{\textbf{Text Analyzer}} &
+  \multicolumn{1}{c|}{\textbf{Scoring Functions}} \\ \hline
 1 &
   RegexTokenizer() $|$ LowercaseFilter() $|$ StopFilter(stoplist = STOP\_WORDS) &
   scoring.MultiWeighting(scoring.Frequency(), title=scoring.BM25F(), content=scoring.TF\_IDF()) \\ \hline
 2 &
   RegexTokenizer()$|$ StopFilter(stoplist = STOP\_WORDS)$|$ LowercaseFilter() $|$ StemFilter() &
-  scoring.BM25F(K1=1.2, B=.75) \\ \hline
+  scoring.TF\_IDF() \\ \hline
 3 &
   StemmingAnalyzer(stoplist=STOP\_WORDS) &
   scoring.TF\_IDF() \\ \hline
@@ -76,63 +82,115 @@ Num Queries in GT & 110                 &  80           \\ \hline
   scoring.BM25F(K1=1.2, B=.75) \\ \hline
 11 &
   StemmingAnalyzer(stoplist=STOP\_WORDS) &
-  scoring.BM25F(K1=2, B=.8) \\ \hline
+  scoring.TF\_IDF() \\ \hline
 12 &
   FancyAnalyzer() &
   scoring.TF\_IDF() \\ \hline
 \end{tabular}}
-\caption{Configuration Overview}
+\caption{Configuration Overview for Cranfield Dataset}
 \label{tab:my-table}
 \end{table}
 
+For which the resulting MRR and R-Precision results are the following (the table presented below is already sorted from highest to lowest MRR values):
 
-\subsection{Cranfield Dataset:}
-
-We will now continue by presenting the most relevant results on the Cranfield Dataset. The first result presented is a table containing all the configurations (ordered by the MRR evaluation metric from highest to lowest), and the R-Precision metrics:
-
-\begin{table}[]
+\begin{table}[H]
 \centering
 \begin{tabular}{|c|c|c|c|c|c|c|c|}
 \hline
-\multicolumn{1}{|l|}{\textbf{Conf ID}} &
+\multicolumn{1}{|l|}{\textbf{Conf. ID}} &
   \multicolumn{1}{l|}{\textbf{MRR}} &
   \multicolumn{1}{l|}{\textbf{Mean}} &
   \multicolumn{1}{l|}{\textbf{Min}} &
-  \multicolumn{1}{l|}{\textbf{1st quartile}} &
+  \multicolumn{1}{l|}{\textbf{1st Quartile}} &
   \multicolumn{1}{l|}{\textbf{Median}} &
-  \multicolumn{1}{l|}{\textbf{3rd quartile}} &
+  \multicolumn{1}{l|}{\textbf{3rd Quartile}} &
   \multicolumn{1}{l|}{\textbf{Max}} \\ \hline
-11 & 0.527 & 0.273 & 0 & 0 & 0.250 & 0.429 & 1.000 \\ \hline
-2  & 0.522 & 0.278 & 0 & 0 & 0.250 & 0.490 & 1.000 \\ \hline
-8  & 0.522 & 0.278 & 0 & 0 & 0.250 & 0.490 & 1.000 \\ \hline
-7  & 0.504 & 0.255 & 0 & 0 & 0.250 & 0.460 & 0.667 \\ \hline
-9  & 0.499 & 0.260 & 0 & 0 & 0.250 & 0.500 & 1.000 \\ \hline
-4  & 0.496 & 0.264 & 0 & 0 & 0.250 & 0.448 & 1.000 \\ \hline
-10 & 0.475 & 0.245 & 0 & 0 & 0.250 & 0.429 & 0.667 \\ \hline
-3  & 0.416 & 0.178 & 0 & 0 & 0.143 & 0.296 & 1.000 \\ \hline
-12 & 0.388 & 0.177 & 0 & 0 & 0.143 & 0.286 & 1.000 \\ \hline
-1  & 0.384 & 0.184 & 0 & 0 & 0.143 & 0.286 & 1.000 \\ \hline
-6  & 0.303 & 0.131 & 0 & 0 & 0.000 & 0.217 & 1.000 \\ \hline
-5  & 0.166 & 0.074 & 0 & 0 & 0.000 & 0.103 & 0.833 \\ \hline
+8  & 0.458 & 0.237 & 0.000 & 0.000 & 0.186 & 0.389 & 1.000 \\ \hline
+9  & 0.453 & 0.230 & 0.000 & 0.000 & 0.167 & 0.379 & 1.000 \\ \hline
+10 & 0.417 & 0.193 & 0.000 & 0.000 & 0.143 & 0.282 & 1.000 \\ \hline
+4  & 0.415 & 0.216 & 0.000 & 0.000 & 0.186 & 0.333 & 1.000 \\ \hline
+7  & 0.412 & 0.212 & 0.000 & 0.000 & 0.170 & 0.333 & 1.000 \\ \hline
+2  & 0.368 & 0.165 & 0.000 & 0.000 & 0.106 & 0.250 & 1.000 \\ \hline
+3  & 0.368 & 0.165 & 0.000 & 0.000 & 0.106 & 0.250 & 1.000 \\ \hline
+11 & 0.368 & 0.165 & 0.000 & 0.000 & 0.106 & 0.250 & 1.000 \\ \hline
+1  & 0.323 & 0.147 & 0.000 & 0.000 & 0.025 & 0.250 & 1.000 \\ \hline
+12 & 0.311 & 0.137 & 0.000 & 0.000 & 0.000 & 0.222 & 1.000 \\ \hline
+6  & 0.248 & 0.104 & 0.000 & 0.000 & 0.000 & 0.167 & 0.833 \\ \hline
+5  & 0.126 & 0.056 & 0.000 & 0.000 & 0.000 & 0.000 & 0.667 \\ \hline
 \end{tabular}
-\caption{MRR and R-Precision Overview}
-\label{MRR}
+\caption{MRR and R-Precision Overview for Cranfield}
+\label{tab:my-table}
 \end{table}
 
-
-
-
-\begin{center}
-\includegraphics[scale=.75]{Pk.png}
-\end{center}
-
+Finally, the next figure shows the results for the NCDG@k and P@k metrics for $k \in [1, 3, 5, 10]$
 
 \begin{center}
-\includegraphics[scale=.75]{NCDGk.png}
+\includegraphics[scale=.75]{CranPlot.png}
+\captionof{figure}{P@k and NCDG@k Plot Results for Cranfield Dataset}
 \end{center}
 
+If we were to choose the best Search Engine solely based on the NCDG@k curve we would choose the configuration for which this ratio is highest when k is maximal. Therefore, based on the previous plot, the champion configuration would be \textbf{Conf 8} (Stemming Analyzer \& BM25F).
 
 \subsection{Time Dataset:}
+
+We will follow the same structure and order to present the Time Dataset results:
+
+\begin{table}[H]
+\centering
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{|p{1cm}|p{10cm}|p{10cm}|}
+\hline
+\textbf{Conf. ID} & \textbf{Text Analyzer}                & \textbf{Scoring Functions}  \\ \hline
+1 & RegexTokenizer() $|$ LowercaseFilter() $|$ StopFilter(stoplist = STOP\_WORDS)              & scoring.TF\_IDF()            \\ \hline
+2 & RegexTokenizer()$|$ StopFilter(stoplist = STOP\_WORDS) $|$ LowercaseFilter() $|$ StemFilter() & scoring.BM25F(K1=1.2, B=.75) \\ \hline
+3               & StemmingAnalyzer(stoplist=STOP\_WORDS) & scoring.TF\_IDF()            \\ \hline
+4               & FancyAnalyzer()                        & scoring.BM25F(K1=2, B=.8)    \\ \hline
+5               & SimpleAnalyzer()                       & scoring.TF\_IDF()            \\ \hline
+6               & StandardAnalyzer()                     & scoring.Frequency()          \\ \hline
+7               & FancyAnalyzer()                        & scoring.BM25F()              \\ \hline
+8               & StemmingAnalyzer(stoplist=STOP\_WORDS) & scoring.BM25F()              \\ \hline
+9 & RegexTokenizer()$|$ StopFilter(stoplist = STOP\_WORDS) $|$ LowercaseFilter() $|$ StemFilter() & scoring.BM25F(K1=2, B=.8)    \\ \hline
+10              & SimpleAnalyzer()                       & scoring.BM25F(K1=1.2, B=.75) \\ \hline
+11              & StemmingAnalyzer(stoplist=STOP\_WORDS) & scoring.BM25F(K1=2, B=.8)    \\ \hline
+12              & FancyAnalyzer()                        & scoring.TF\_IDF()            \\ \hline
+\end{tabular}}
+\caption{Configuration Overview for Time Dataset}
+\label{tab:my-table}
+\end{table}
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{1}{|l|}{\textbf{Conf. ID}} &
+  \multicolumn{1}{l|}{\textbf{MRR}} &
+  \multicolumn{1}{l|}{\textbf{Mean}} &
+  \multicolumn{1}{l|}{\textbf{Min}} &
+  \multicolumn{1}{l|}{\textbf{1st Quartile}} &
+  \multicolumn{1}{l|}{\textbf{Median}} &
+  \multicolumn{1}{l|}{\textbf{3rd Quartile}} &
+  \multicolumn{1}{l|}{\textbf{Max}} \\ \hline
+11 & 0.725 & 0.555 & 0.000 & 0.264 & 0.539 & 0.906 & 1.000 \\ \hline
+8  & 0.717 & 0.562 & 0.000 & 0.200 & 0.564 & 1.000 & 1.000 \\ \hline
+2  & 0.708 & 0.557 & 0.000 & 0.200 & 0.564 & 1.000 & 1.000 \\ \hline
+9  & 0.703 & 0.550 & 0.000 & 0.200 & 0.539 & 0.906 & 1.000 \\ \hline
+4  & 0.689 & 0.539 & 0.000 & 0.200 & 0.500 & 0.889 & 1.000 \\ \hline
+7  & 0.678 & 0.549 & 0.000 & 0.321 & 0.500 & 0.889 & 1.000 \\ \hline
+10 & 0.669 & 0.542 & 0.000 & 0.321 & 0.500 & 0.889 & 1.000 \\ \hline
+1  & 0.590 & 0.351 & 0.000 & 0.000 & 0.376 & 0.600 & 1.000 \\ \hline
+3  & 0.566 & 0.309 & 0.000 & 0.000 & 0.333 & 0.500 & 1.000 \\ \hline
+12 & 0.536 & 0.285 & 0.000 & 0.000 & 0.171 & 0.510 & 1.000 \\ \hline
+6  & 0.457 & 0.238 & 0.000 & 0.000 & 0.063 & 0.500 & 1.000 \\ \hline
+5  & 0.240 & 0.084 & 0.000 & 0.000 & 0.000 & 0.125 & 1.000 \\ \hline
+\end{tabular}
+\caption{MRR and R-Precision Overview for Time}
+\label{tab:my-table}
+\end{table}
+
+\begin{center}
+\includegraphics[scale=.75]{TimePlot.png}
+\captionof{figure}{P@k and NCDG@k Plot Results for Time Dataset}
+\end{center}
 
 
 \section{Part 2.1}
@@ -156,7 +214,7 @@ b > \frac{log(1-0.97)}{log(1-0.95^r)}
 
 In order to minimze the False Negatives we will stress the $0.97$ boud as much as possible, specifically up to $0.999$. This will reduce the number of False Negatives, but will of course increase the number of False Positives. Since we will be able to remove some of the False Positives later on we will not worry too much for the moment. With this assumption, fixing a value of $r=15$ we have decided to use the following parameters:
 
-\begin{table}[]
+\begin{table}[H]
 \centering
 \begin{tabular}{|l|l|}
 \hline

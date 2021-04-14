@@ -1,16 +1,7 @@
 from bs4 import BeautifulSoup
 import regex as re
-import os
 import csv
-import pandas as pd
-import json
-from whoosh.index import create_in
-from whoosh.fields import *
 from whoosh.analysis import *
-import pandas as pd
-from whoosh import index as abc
-from whoosh.qparser import *
-from whoosh import scoring
 import os
 
 
@@ -46,9 +37,8 @@ def parse_html_files(path, output='html_content.tsv'):
 
 
 def main():
-    path = 'D:\Sapienza\Second_Semester\DMT\DMT\Homework1\data\DOCUMENTS'
-    parse_html_files(path, output='html_content.tsv')
-
+    path = '..\..\..\data\DOCUMENTS_CRAN'
+    parse_html_files(path, output='html_content_cran.tsv')
 
 
 if __name__ == "__main__":
