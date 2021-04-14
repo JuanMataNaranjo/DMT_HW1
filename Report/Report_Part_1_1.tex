@@ -195,7 +195,7 @@ We will follow the same structure and order to present the Time Dataset results:
 
 \section{Part 2.1}
 
-The first thing we have to do before running the LSH algorithm is to figure out the best $r$ (number of rows in each band), $b$ (number of bands) and $n$ (number of hash functions used) parameters such that we can minimize the number of False Positives and False Negatives. In particular, the choice of parameters will mainly help us to minimize the quantity of False Negatives. Taking inot account the other constraints which are the following:
+The first thing we have to do before running the LSH algorithm is to figure out the best $r$ (number of rows in each band), $b$ (number of bands) and $n$ (number of hash functions used) parameters such that we can minimize the number of False Positives and False Negatives. In particular, the choice of parameters will mainly help us to minimize the quantity of False Negatives. For the parameter choices we also need to take into account the following constraints:
 
 \begin{equation}
 r \cdot b = n
@@ -206,13 +206,13 @@ r \cdot b = n
 0.97 > 1 - (1-0.95^r)^b
 \end{equation}
 
-From the second constraint we can see that the following relation holds:
+From the second constraint, solving for b we can see that the following relation holds:
 
 \begin{equation}
 b > \frac{log(1-0.97)}{log(1-0.95^r)}
 \end{equation}
 
-In order to minimze the False Negatives we will stress the $0.97$ boud as much as possible, specifically up to $0.999$. This will reduce the number of False Negatives, but will of course increase the number of False Positives. Since we will be able to remove some of the False Positives later on we will not worry too much for the moment. With this assumption, fixing a value of $r=15$ we have decided to use the following parameters:
+Therefore, to minimze the False Negatives we will stress the $0.97$ bound as much as possible, specifically up to $0.999$. This will reduce the number of False Negatives, but will of course increase the number of False Positives. Since we will be able to remove some of the False Positives later on we are willing to make this compromise. So finally, fixing a value of $r=15$ we have decided to use the following parameters:
 
 \begin{table}[H]
 \centering
@@ -227,10 +227,11 @@ In order to minimze the False Negatives we will stress the $0.97$ boud as much a
 \end{table}
 
 \begin{center}
-\includegraphics[scale=.75]{Splot.png}
+\includegraphics[scale=.70]{Splot.png}
+\captionof{figure}{Relationship between Jaccard Similarity and probability that LSH will return that pair as a potential near duplicate}
 \end{center}
 
-After running the LSH algorithm with the previous set of parameters we got the following number of \textit{potential} near duplicate matches: \textbf{34655}. However, as we already mentioned before, we can still reduce the number of False Positives a posteriori by computing the Jaccard Similarity over the set of pairs provided by the LSH tool, and therefore eliminating those pairs which we will not consider as near duplicates. For this purpose we have used the code named "False Positive Reduction" (in which we re-compute the real Jaccard similarity and not the approximated one), after which the number of \textit{final} near duplicates was: \textbf{33868}. Of course, in this specific case we could reduce the number of  False Negatives, making the LSH algorithm return more potential pairs (approx. 13$\%$). This might be too many potential pairs in other applications where instead of 250K documents we have billion documents. In these cases the percentage of potential pairs in output must be much lower, and therefore we might have to deal with having more False Negatives.
+After running the LSH algorithm with the previous set of parameters we got the following number of \textit{potential} near duplicate matches: \textbf{34655} (meaning the LSH algorithm has returned \~13\% of the pairs). However, as we already mentioned before, we can still reduce the number of False Positives a posteriori by computing the Jaccard Similarity over the set of pairs provided by the LSH tool, and therefore eliminating those pairs which we will not be consider as near duplicates. For this purpose we have used the code named "False Positive Reduction" (in which we re-compute the real Jaccard similarity and not the approximated one), after which the number of \textit{final} near duplicates is: \textbf{33868}.
 
 The total time required to run the LSH tool with the parameters highlighted previously was of \textbf{7 minutes and 15 seconds} on our machine.
 
