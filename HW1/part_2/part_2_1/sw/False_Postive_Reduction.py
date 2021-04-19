@@ -53,15 +53,14 @@ def main():
 
     reduce_false_positive(input=input_path, output=output_path, file_path=file_path)
 
+    file = pd.read_csv(input_path, delimiter='\t')
+    print('Potential Near Duplicates:', len(file))
+
+    file = pd.read_csv(output_path, delimiter='\t')
+    print('Final Near Duplicates:', len(file))
+
 
 if __name__ == "__main__":
     main()
 
 
-myfilePath = 'HW1/part_2/part_2_1/output_data/Results.tsv'
-file = pd.read_csv(myfilePath, delimiter='\t')
-print('Potential Near Duplicates:', len(file))
-
-myfilePath = 'HW1/part_2/part_2_1/output_data/Final_Results.tsv'
-file = pd.read_csv(myfilePath, delimiter='\t')
-print('Final Near Duplicates:', len(file))

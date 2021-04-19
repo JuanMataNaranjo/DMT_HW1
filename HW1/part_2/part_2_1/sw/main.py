@@ -15,7 +15,7 @@ def generate_shingles(input_path, output_path, w=3):
     :return:
     """
     j = 0
-    shingles_dict = defaultdict(list)
+    shingles_dict = defaultdict(set)
     shingles_identifier = dict()
     with open(input_path, 'r') as read_obj:
         csv_reader = csv.reader(read_obj)
@@ -39,15 +39,14 @@ def generate_shingles(input_path, output_path, w=3):
                     shingle = ' '.join(lyric_words[i:i + w])
                     if shingle not in shingles_identifier:
                         shingles_identifier[shingle] = len(shingles_identifier)
-                    shingles_dict['ID_' + str(ID)].extend([shingles_identifier[shingle]])
+                    shingles_dict['ID_' + str(ID)].update([shingles_identifier[shingle]])
 
     print('...writing tsv file...')
     with open(output_path, 'w', newline='') as out_file:
         tsv_writer = csv.writer(out_file, delimiter='\t')
         tsv_writer.writerow(['ID', 'Shingles'])
         for key, values in shingles_dict.items():
-            tsv_writer.writerow([key, values])
-
+            tsv_writer.writerow([key, list(values)])
 
 
 def prob(j, r, b):
@@ -83,7 +82,7 @@ def view_plot(r, b='default', jacc=.95, t=.97):
 
 def main():
     input_path = '../../dataset/250K_lyrics_from_MetroLyrics.csv'
-    output_path = '../input_data/Shingles.tsv'
+    output_path = '../data/Shingles.tsv'
     w = 3
     generate_shingles(input_path, output_path, w=w)
 
@@ -107,9 +106,3 @@ if __name__ == "__main__":
 # that are below the threshold)
 # The way in which we reduce the number of False Negatives is by fine-tunning as best as possible the b value before hand
 
-
-import pandas as pd
-
-df = pd.read_csv('HW1/part_2/dataset/250K_lyrics_from_MetroLyrics.csv')
-
-test = df[~(df['song'].str.contains(' ', na=False) | df['song'].str.contains('-', na=False))]
