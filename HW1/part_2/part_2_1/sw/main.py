@@ -106,3 +106,10 @@ if __name__ == "__main__":
 # the LSH algorithm (LSH gives us the potential matches and we compute the actual match a posteriori and remove those
 # that are below the threshold)
 # The way in which we reduce the number of False Negatives is by fine-tunning as best as possible the b value before hand
+
+
+import pandas as pd
+
+df = pd.read_csv('HW1/part_2/dataset/250K_lyrics_from_MetroLyrics.csv')
+
+test = df[~(df['song'].str.contains(' ', na=False) | df['song'].str.contains('-', na=False))]
