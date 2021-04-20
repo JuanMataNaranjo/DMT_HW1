@@ -1,4 +1,4 @@
-\documentclass[12pt]{article}
+\documentclass[10pt]{article}
 \usepackage{graphicx}
 \usepackage[a4paper, total={7in, 9in}]{geometry}
 \usepackage{titlesec}
@@ -11,15 +11,32 @@
 \titlespacing*{\paragraph}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
-\title{DMT - Homework 1}
-\author{
-        Tran Luong Bang, Juan Mata Naranjo \\
-                Master in Data Science}
-\date{\today}
 
 \begin{document}
-\maketitle
-\newpage
+
+\begin{titlepage}
+    \begin{center}
+        \vspace*{3cm}
+            
+        \Huge
+        \textbf{Data Mining Technology}
+            
+        \vspace{0.5cm}
+        \LARGE
+        Homework 1
+            
+        \vspace{1.5cm}
+            
+        \textit{Tran Luong Bang -  \\ Juan Mata Naranjo - 1939671}
+            
+            
+        \vspace{0.8cm}
+            
+        \includegraphics[width=1\textwidth]{sapienza.png}
+            
+    \end{center}
+\end{titlepage}
+
 
 \section{Part 1.1}
 
@@ -29,10 +46,10 @@ Before we deep dive into each of the individual datasets and their respective re
 \centering
 \begin{tabular}{|l|l|l|}
 \hline
-                  & Cranfield Dataset & Time Dataset \\ \hline
-Num Indexed Docs  & 1400                 & 423            \\ \hline
-Num Queries       & 225                 & 83            \\ \hline
-Num Queries in GT & 110                 &  80           \\ \hline
+                  & \textbf{Cranfield Dataset} & \textbf{Time Dataset} \\ \hline
+\textbf{Num Indexed Docs}  & 1400                 & 423            \\ \hline
+\textbf{Num Queries}       & 225                 & 83            \\ \hline
+\textbf{Num Queries in GT} & 110                 &  80           \\ \hline
 \end{tabular}
 \caption{Overview Table}
 \label{Overview Table}
@@ -125,7 +142,7 @@ For which the resulting MRR and R-Precision results are the following (the table
 Finally, the next figure shows the results for the NCDG@k and P@k metrics for $k \in [1, 3, 5, 10]$
 
 \begin{center}
-\includegraphics[scale=.75]{CranPlot.png}
+\includegraphics[scale=.85]{CranPlot.png}
 \captionof{figure}{P@k and NCDG@k Plot Results for Cranfield Dataset}
 \end{center}
 
@@ -188,10 +205,36 @@ We will follow the same structure and order to present the Time Dataset results:
 \end{table}
 
 \begin{center}
-\includegraphics[scale=.75]{TimePlot.png}
+\includegraphics[scale=.85]{TimePlot.png}
 \captionof{figure}{P@k and NCDG@k Plot Results for Time Dataset}
 \end{center}
 
+\section{Part 1.2}
+
+To select the best Search-Engine modules for the “AwesomeSocialApp”, we will use the following evaluation metrics for ranking problems:
+
+\textbf{Precision\@k:} If we consider ‘of all the query results we predicted to be True, how many were actually True?’ The graph shows that SE1 performs slightly better than SE3 and much better than SE2
+
+\begin{center}
+\includegraphics[scale=.25]{Pk.png}
+\captionof{figure}{P@k Evaluation Metrics of Search Engines}
+\end{center}
+
+\textbf{Recall\@k:} If we consider ‘of all the query results that were actually True, how many I predicted to be True’. As we can see on graph below, SE3 should be selected compared with SE1 and SE2
+
+\begin{center}
+\includegraphics[scale=.25]{Rk.png}
+\captionof{figure}{R@k Evaluation Metrics of Search Engines}
+\end{center}
+
+\textbf{NCDG\@k:} Normalized Discounted Cumulative Gain is a metric that is particularly good at evaluating search engines which return ranked outputs (the order of the output is relevant for this metric)
+
+\begin{center}
+\includegraphics[scale=.25]{nDCG.png}
+\captionof{figure}{nDCG@k Evaluation Metrics of Search Engines}
+\end{center}
+
+As we can see the figures on 3 graphs, SE1 and SE3 have a similar performance and much better than SE 2. But SE3 have a better performance on \textbf{nDCG@k} and \textbf{Recall@k} evaluation metrics, we highly recommend The “DummyDataScience” company to choose \textit{SE3} for this application.
 
 \section{Part 2.1}
 
@@ -231,111 +274,9 @@ Therefore, to minimze the False Negatives we will stress the $0.97$ bound as muc
 \captionof{figure}{Relationship between Jaccard Similarity and probability that LSH will return that pair as a potential near duplicate}
 \end{center}
 
-After running the LSH algorithm with the previous set of parameters we got the following number of \textit{potential} near duplicate matches: \textbf{34655} (meaning the LSH algorithm has returned \~13\% of the pairs). However, as we already mentioned before, we can still reduce the number of False Positives a posteriori by computing the Jaccard Similarity over the set of pairs provided by the LSH tool, and therefore eliminating those pairs which we will not be consider as near duplicates. For this purpose we have used the code named "False Positive Reduction" (in which we re-compute the real Jaccard similarity and not the approximated one), after which the number of \textit{final} near duplicates is: \textbf{33868}.
+After running the LSH algorithm with the previous set of parameters we got the following number of \textit{potential} near duplicate matches: \textbf{34655}. However, as we already mentioned before, we can still reduce the number of False Positives a posteriori by computing the Jaccard Similarity over the set of pairs provided by the LSH tool, and therefore eliminating those pairs which we will not be consider as near duplicates. For this purpose we have used the code named "False Positive Reduction" (in which we re-compute the real Jaccard similarity and not the approximated one), after which the number of \textit{final} near duplicates is: \textbf{33868}.
 
 The total time required to run the LSH tool with the parameters highlighted previously was of \textbf{7 minutes and 15 seconds} on our machine.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-\begin{equation}
-TH \leq \frac{l}{\hat{h}\nu_f}
-\end{equation}
-
-
-
-\begin{equation}
-l = \frac{N\cdot n + S}{2}
-\end{equation}
-
-
-\begin{equation}
-\nu_f = \frac{S(S-1)}{2}
-\end{equation}
-
-
-\begin{equation}
-l = \frac{Nn + S}{2} \geq \frac{Nn}{2}
-\end{equation}
-
-The maximum number of links that we can have in a topology is by having a line topology (all switches can connect to as many servers as possible, therefore the number of links in our network is necesarilly smaller than this value).
-
-\begin{equation}
-l \leq 2(n-1) +(N-1)+(n-2)(N-2) = N(n-1) + 1
-\end{equation}
-
-\begin{equation}
-l \leq f(n,N)
-\end{equation}
-
-\begin{equation}
-\nu_f \geq f(n,N) = 2(n-1) + (N-2)(n-2)
-\end{equation}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 \end{document}
