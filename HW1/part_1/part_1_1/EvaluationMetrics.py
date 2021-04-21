@@ -62,6 +62,31 @@ def P_at_k(ground_truth_dict, search_engine_conf, k_vals=[1, 3, 5, 10]):
 
     return k_list
 
+def R_at_k(ground_truth_dict, search_engine_conf, k_vals=[1, 3, 5, 10]):
+    """
+
+    :param ground_truth_dict:
+    :param search_engine_conf: Should only contain the top 5 already
+    :param k_vals:
+    :return:
+    """
+    k_list = dict()
+    for k in k_vals:
+        r_at_k_list = []
+        for key, value in search_engine_conf.items():
+            res_temp = []
+            for query_id, doc_ids in ground_truth_dict.items():
+                try:
+                    res = len(set(ground_truth_dict[query_id]).intersection(
+                        set(value[int(query_id)][:k]))) / len(set(ground_truth_dict[query_id]).intersection(set(value[int(query_id)])))
+                    res_temp.append(res)
+                except:
+                    res_temp.append(0)
+            r_at_k_list.append(res_temp)
+        k_list[k] = list(np.mean(r_at_k_list, axis=1))
+
+    return k_list
+
 
 def ncdg(ground_truth_dict, search_engine_conf, k_vals=[1, 3, 5, 10]):
 
@@ -183,52 +208,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-#
-#
-# ##### Dummy Data
-# import random
-#
-# num = 10
-#
-# GT = {'1': random.sample(range(1, num), 5), '3': random.sample(range(1, num), 3), '5': random.sample(range(1, num), 5),
-#       '7': random.sample(range(1, num), 7), '9': random.sample(range(1, num), 6), '10': random.sample(range(1, num), 4)}
-#
-# se = {1: {1: random.sample(range(1, num), 4), 2: random.sample(range(1, num), 5), 3: random.sample(range(1, num), 4),
-#           4: random.sample(range(1, num), 6), 5: random.sample(range(1, num), 5), 6: random.sample(range(1, num), 8),
-#           7: random.sample(range(1, num), 5), 8: random.sample(range(1, num), 4), 9: random.sample(range(1, num), 5),
-#           10: random.sample(range(1, num), 5)},
-#       2: {1: random.sample(range(1, num), 5), 2: random.sample(range(1, num), 5), 3: random.sample(range(1, num), 5),
-#           4: random.sample(range(1, num), 5), 5: random.sample(range(1, num), 5), 6: random.sample(range(1, num), 5),
-#           7: random.sample(range(1, num), 5), 8: random.sample(range(1, num), 5), 9: random.sample(range(1, num), 5),
-#           10: random.sample(range(1, num), 5)},
-#       3: {1: random.sample(range(1, num), 5), 2: random.sample(range(1, num), 5), 3: random.sample(range(1, num), 5),
-#           4: random.sample(range(1, num), 5), 5: random.sample(range(1, num), 5), 6: random.sample(range(1, num), 5),
-#           7: random.sample(range(1, num), 5), 8: random.sample(range(1, num), 5), 9: random.sample(range(1, num), 5),
-#           10: random.sample(range(1, num), 5)},
-#       4: {1: random.sample(range(1, num), 5), 2: random.sample(range(1, num), 5), 3: random.sample(range(1, num), 5),
-#           4: random.sample(range(1, num), 5), 5: random.sample(range(1, num), 5), 6: random.sample(range(1, num), 5),
-#           7: random.sample(range(1, num), 5), 8: random.sample(range(1, num), 5), 9: random.sample(range(1, num), 5),
-#           10: random.sample(range(1, num), 5)},
-#       5: {1: random.sample(range(1, num), 5), 2: random.sample(range(1, num), 5), 3: random.sample(range(1, num), 5),
-#           4: random.sample(range(1, num), 5), 5: random.sample(range(1, num), 5), 6: random.sample(range(1, num), 5),
-#           7: random.sample(range(1, num), 5), 8: random.sample(range(1, num), 5), 9: random.sample(range(1, num), 5),
-#           10: random.sample(range(1, num), 5)}}
-#
-# utils.write_json('./data/GT.json', GT)
-# utils.write_json('./data/se.json', se)
-#
-# test_MRR = MRR(GT, se)  # tested
-#
-# test_r_precision = R_Precision(GT, se)  # tested
-# test_p = P_at_k(GT, se)  # tested
-#
-# GT = {'1': [3, 6, 2, 8, 99], '2': [7, 3], '3': [9, 5, 7, 3, 1, 11, 21, 43, 27],
-#       '4': [8, 6, 4, 2, 99]}
-#
-# se = {1: {1: [99, 1, 2, 3, 4, 5, 6, 7, 8, 9],
-#           2: [3, 7, 2, 1, 4, 5, 6, 0, 8, 9],
-#           3: [7, 3, 2, 1, 4, 5, 6, 0, 8, 9],
-#           4: [3, 5, 7, 99, 2, 1, 6, 9, 8, 4],
-#           5: [2, 4, 7, 8, 1, 2, 4]}}
-#
